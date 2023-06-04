@@ -103,7 +103,12 @@
               create_one_line "enter-shell.nu"
               ''
                 print "Welcome to lapce-nix environment!"
+                print "To publish plugin, run:"
+                print $"('with-env { VOLTS_TOKEN: (open <path-to-key>) } { publish }' | nu-highlight)"
               '';
+            scripts = {
+              publish.exec = create_one_line "publish.nu" "nix build --print-build-logs; (cd result; ~/.cargo/bin/volts --token $env.VOLTS_TOKEN publish)";
+            };
 
             containers = lib.mkForce {};
           };
