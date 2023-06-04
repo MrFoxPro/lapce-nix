@@ -58,40 +58,27 @@
               minimal.cargo
               targets.${target}.latest.rust-std
             ];
-          # crane_lib = (crane.mkLib pkgs).overrideToolchain rust_toolchain;
-          # common_args = {
-          #   src = crane_lib.cleanCargoSource (crane_lib.path ./.);
-          #   doCheck = false;
-          #   cargoExtraArgs = "--target wasm32-wasi";
-          # };
-          # lapce_crate = crane_lib.buildPackage (
-          #   common_args
-          #   // {
-          #     # cargoArtifacts = crane_lib.buildDepsOnly common_args;
-          #     cargoBuildCommand = "cargo build --profile release -Z unstable-options --out-dir .";
-          #   }
-          # );
+
+          crane_lib = (crane.mkLib pkgs).overrideToolchain toolchain;
+          common_args = {
+            src = ./.;
+            doCheck = false;
+            cargoExtraArgs = "--target ${target}";
+          };
+          lapce_crate = crane_lib.buildPackage (
+            common_args
+            // {
+              nativeBuildInputs = [pkgs.tree];
+              cargoBuildCommand = "cargo build --profile release -Z unstable-options --out-dir $out";
+              installPhaseCommand = create_one_line "install-phase-command.nu" ''
+                let static_files = [ icon.png README.md volt.toml ]
+                for $file in $static_files { cp $file $env.out}
+              '';
+            }
+          );
         in {
-          packages.default = let
-            manifest = with builtins; fromTOML (readFile ./Cargo.toml);
-          in
-            (pkgs.makeRustPlatform {
-              cargo = toolchain;
-              rustc = toolchain;
-            })
-            .buildRustPackage {
-              src = ./.;
-
-              pname = manifest.package.name;
-              version = manifest.package.version;
-
-              cargoBuildFlags = ["--target=${target}"];
-              doCheck = false;
-              cargoLock = {
-                lockFile = ./Cargo.lock;
-                allowBuiltinFetchGit = true;
-              };
-            };
+          packages.default = lapce_crate;
+          checks = {inherit lapce_crate;};
 
           _module.args = {inherit pkgs lib;};
 
@@ -112,11 +99,14 @@
                 pkgs.lapce
               ]
               ++ [toolchain];
-            enterShell = create_one_line "enterShell" "print 'Hello from Nushell!'";
+            enterShell =
+              create_one_line "enter-shell.nu"
+              ''
+                print "Welcome to lapce-nix environment!"
+              '';
+
             containers = lib.mkForce {};
           };
-          # checks = {inherit lapce_crate;};
-          # packages.default = lapce_crate;
         };
       };
 }

@@ -4,6 +4,6 @@ Install [nil](https://github.com/oxalica/nil) (recommended) or [rnix-lsp](https:
 Configure path to LSP server in Lapce settings.toml
 
 ```toml
-[lapce-nil]
-nil-path = "/home/<user>/.nix-profile/bin/nil"
+[lapce-nix]
+lsp-path = "/home/<user>/.nix-profile/bin/nil"
 ```
