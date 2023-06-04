@@ -16,11 +16,19 @@ struct State {}
 register_plugin!(State);
 
 fn initialize(params: InitializeParams) -> Result<()> {
-    let document_selector: DocumentSelector = vec![DocumentFilter {
-        language: Some(String::from("nix")), // This alone doesn't work, should be with patter
-        pattern: Some(String::from("**/*.nix")),
-        scheme: None,
-    }];
+    let document_selector: DocumentSelector = vec![
+        // something is broken here
+        DocumentFilter {
+            language: None, // This alone doesn't work, should be with pattern
+            pattern: Some(String::from("**/*.nix")),
+            scheme: None,
+        },
+        DocumentFilter {
+            language: Some(String::from("nix")),
+            pattern: None,
+            scheme: None,
+        },
+    ];
 
     let server_path = params
         .initialization_options
@@ -31,14 +39,12 @@ fn initialize(params: InitializeParams) -> Result<()> {
 
     match server_path {
         Some(server_path) => {
-            PLUGIN_RPC
-                .start_lsp(
-                    server_path,
-                    Vec::new(),
-                    document_selector.clone(),
-                    None, // params.initialization_options,
-                )
-                .unwrap();
+            PLUGIN_RPC.start_lsp(
+                server_path,
+                Vec::new(),
+                document_selector.clone(),
+                None, // params.initialization_options,
+            );
         }
         None => {
             PLUGIN_RPC.window_show_message(
@@ -46,7 +52,7 @@ fn initialize(params: InitializeParams) -> Result<()> {
                 format!(
                     "Server binary couldn't be loaded, please check if it's installed and path is correct."
                 ),
-            ).unwrap();
+            );
         }
     }
 
