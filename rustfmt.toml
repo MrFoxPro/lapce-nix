@@ -1,0 +1,6 @@
+reorder_imports = true
+newline_style = "Unix"
+indent_style = "Block"
+
+imports_granularity = "Crate"
+group_imports = "StdExternalCrate"

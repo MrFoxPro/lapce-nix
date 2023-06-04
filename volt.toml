@@ -1,0 +1,16 @@
+name = "lapce-nix"
+author = "mrfoxpro"
+version = "0.0.1"
+display-name = "Nil (Nix)"
+icon = "icon.png"
+description = "Plugin for oxalica/nil: Nix Language server, an incremental analysis assistent for writing in Nix."
+wasm = "lapce-nix.wasm"
+repository = "https://github.com/mrfoxpro/lapce-nil"
+
+[activation]
+language = ["nix"]
+workspace-contains = ["**/*.nix"]
+
+[config."lsp-path"]
+default = "/usr/bin/nil"
+description = "Path to nil executable. When empty, it points to the bundled binary."
