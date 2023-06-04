@@ -72,7 +72,7 @@
               cargoBuildCommand = "cargo build --profile release -Z unstable-options --out-dir $out";
               installPhaseCommand = create_one_line "install-phase-command.nu" ''
                 let static_files = [ icon.png README.md volt.toml ]
-                for $file in $static_files { cp $file $env.out}
+                for $file in $static_files { install -Dm644 $file $env.out }
               '';
             }
           );
@@ -92,7 +92,7 @@
             };
           };
           devenv.shells.default = {
-            name = "lapce-nil@shell";
+            name = "lapce-nix_shell";
             packages = with inputs';
               [
                 alejandra.packages.default
@@ -107,7 +107,7 @@
                 print $"('with-env { VOLTS_TOKEN: (open <path-to-key>) } { publish }' | nu-highlight)"
               '';
             scripts = {
-              publish.exec = create_one_line "publish.nu" "nix build --print-build-logs; (cd result; ~/.cargo/bin/volts --token $env.VOLTS_TOKEN publish)";
+              publish.exec = create_one_line "publish.nu" "nix build; (cd result; ~/.cargo/bin/volts --token $env.VOLTS_TOKEN publish)";
             };
 
             containers = lib.mkForce {};
