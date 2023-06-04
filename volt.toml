@@ -5,7 +5,7 @@ display-name = "Nix LSP"
 icon = "icon.png"
 description = "Plugin for oxalica/nil: Nix Language server, an incremental analysis assistent for writing in Nix."
 wasm = "lapce-nix.wasm"
-repository = "https://github.com/MrFoxPro/lapce-nix"
+repository = "https://github.com/mrfoxpro/lapce-nix"
 
 [activation]
 language = ["nix"]
