@@ -108,6 +108,15 @@
               '';
             scripts = {
               publish.exec = create_one_line "publish.nu" "nix build; (cd result; ~/.cargo/bin/volts --token $env.VOLTS_TOKEN publish)";
+              test-local.exec =
+                create_one_line "test-local.nu"
+                ''
+                  let target = ~/.local/share/lapce-stable/plugins/MrFoxPro.lapce-nil
+                  rm -r $target
+                  mkdir $target
+                  cp -r ./result/* $target
+                  exec lapce
+                '';
             };
 
             containers = lib.mkForce {};
