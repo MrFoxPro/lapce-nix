@@ -45,7 +45,7 @@
         }: let
           pkgs = import nixpkgs {
             inherit system;
-            overlays = [inputs.nuenv.overlays.nuenv];
+            overlays = [inputs.nuenv.overlays.nuenv inputs.nuenv.overlays.default];
             config.allowUnfree = true;
           };
           lib = pkgs.lib;
@@ -72,6 +72,8 @@
               cargoBuildCommand = "cargo build --profile release -Z unstable-options --out-dir $out";
               installPhaseCommand = create_one_line "install-phase-command.nu" ''
                 let static_files = [ icon.png README.md volt.toml ]
+                ls | print
+
                 for $file in $static_files { install -Dm644 $file $env.out }
               '';
             }
